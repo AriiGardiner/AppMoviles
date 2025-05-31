@@ -1,14 +1,15 @@
 import React from 'react';
-import AppNavigator from './Navigation/AppNavigator';
-import { TaskProvider } from './Context/TaskContext'; // Importar el TaskProvider [cite: 4]
+import AppNavigator from'./navigation/AppNavigator';
+import { TaskProvider } from './Context/TaskContext';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet } from 'react-native';
+import { Colors } from './constants/Colors';
 
 export default function App() {
   return (
     <TaskProvider>
       <View style={styles.container}>
-        <StatusBar style="light" backgroundColor="#4A148C" /> {/* Configurar la barra de estado */}
+        <StatusBar style="light" backgroundColor={Colors.primary} />
         <AppNavigator />
       </View>
     </TaskProvider>
@@ -18,6 +19,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.background,
   },
 });

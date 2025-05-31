@@ -4,10 +4,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import TaskListScreen from '../screens/TaskListScreen';
 import AddEditTaskScreen from '../screens/AddEditTaskScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import { Colors } from '../constants/Colors';
 
 const Stack = createStackNavigator();
 
-const AppNavigator = () => {
+AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="TaskList" screenOptions={{ headerShown: false }}>

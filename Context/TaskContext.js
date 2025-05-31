@@ -1,17 +1,16 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Para persistencia permanente [cite: 6]
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 
-const TaskContext = createContext(); // Creación del contexto [cite: 4]
+const TaskContext = createContext();
 
 export const TaskProvider = ({ children }) => {
-  const [tasks, setTasks] = useState([]); // Estado para las tareas en memoria [cite: 4]
+  const [tasks, setTasks] = useState([]);
 
-  // Cargar tareas al iniciar la aplicación [cite: 6]
   useEffect(() => {
     const loadTasks = async () => {
       try {
-        const storedTasks = await AsyncStorage.getItem('tasks'); // Obtener tareas de AsyncStorage [cite: 6]
+        const storedTasks = await AsyncStorage.getItem('tasks');
         if (storedTasks) {
           setTasks(JSON.parse(storedTasks));
         }
@@ -23,11 +22,10 @@ export const TaskProvider = ({ children }) => {
     loadTasks();
   }, []);
 
-  // Guardar tareas cada vez que cambien [cite: 6]
   useEffect(() => {
     const saveTasks = async () => {
       try {
-        await AsyncStorage.setItem('tasks', JSON.stringify(tasks)); // Guardar tareas en AsyncStorage [cite: 6]
+        await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
       } catch (error) {
         console.error("Error saving tasks to AsyncStorage:", error);
         Alert.alert("Error", "No se pudieron guardar las tareas.");
@@ -36,20 +34,18 @@ export const TaskProvider = ({ children }) => {
     saveTasks();
   }, [tasks]);
 
-  // Función para añadir una tarea [cite: 15]
-  const addTask = (title, description, priority) => {
+  const addTask = (title, description, priority, status) => {
     const newTask = {
-      id: Date.now().toString(), // ID único para cada tarea
+      id: Date.now().toString(),
       title,
       description,
       priority,
-      status: 'pending', // Estado inicial de la tarea [cite: 15]
+      status: status || 'pending',
       createdAt: new Date().toISOString(),
     };
     setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
-  // Función para editar una tarea [cite: 15]
   const editTask = (id, updatedTitle, updatedDescription, updatedPriority, updatedStatus) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
@@ -66,15 +62,12 @@ export const TaskProvider = ({ children }) => {
     );
   };
 
-  // Función para eliminar una tarea [cite: 15]
   const deleteTask = (id) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
 
-  // Función para obtener sugerencias (simulación de API) [cite: 3, 16]
   const getOrganizationSuggestion = async () => {
     try {
-      // Simular una llamada a la API con un retraso
       const suggestions = [
         "Prioriza tus tareas más importantes al principio del día.",
         "Divide las tareas grandes en pasos más pequeños.",
@@ -96,7 +89,6 @@ export const TaskProvider = ({ children }) => {
   );
 };
 
-// Hook personalizado para usar el contexto de tareas
 export const useTasks = () => {
   const context = useContext(TaskContext);
   if (!context) {

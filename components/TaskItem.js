@@ -1,29 +1,54 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '../constants/Colors';
 
 const TaskItem = ({ task, onEdit, onDelete, onToggleStatus }) => {
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'high':
-        return '#FF6347'; // Rojo tomate
+        return Colors.priorityHigh;
       case 'medium':
-        return '#FFD700'; // Oro
+        return Colors.priorityMedium;
       case 'low':
-        return '#3CB371'; // Verde mar
+        return Colors.priorityLow;
       default:
-        return '#A9A9A9'; // Gris oscuro
+        return Colors.textSecondary;
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
       case 'completed':
-        return '#28a745'; // Verde
+        return Colors.statusCompleted;
       case 'pending':
-        return '#ffc107'; // Amarillo
+        return Colors.statusPending;
       default:
-        return '#6c757d'; // Gris
+        return Colors.textSecondary;
+    }
+  };
+
+  const getPriorityText = (priority) => {
+    switch (priority) {
+      case 'high':
+        return 'Alta';
+      case 'medium':
+        return 'Media';
+      case 'low':
+        return 'Baja';
+      default:
+        return priority;
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'completed':
+        return 'Completada';
+      case 'pending':
+        return 'Pendiente';
+      default:
+        return status;
     }
   };
 
@@ -33,29 +58,33 @@ const TaskItem = ({ task, onEdit, onDelete, onToggleStatus }) => {
         <Text style={styles.title}>{task.title}</Text>
         <TouchableOpacity onPress={() => onToggleStatus(task.id, task.status)}>
           <Ionicons
-            name={task.status === 'completed' ? 'checkmark-circle' : 'hourglass-outline'}
-            size={24}
+            name={task.status === 'completed' ? 'checkmark-circle' : 'time-outline'}
+            size={26}
             color={getStatusColor(task.status)}
           />
         </TouchableOpacity>
       </View>
       <Text style={styles.description}>{task.description}</Text>
       <View style={styles.details}>
-        <Text style={[styles.priority, { backgroundColor: getPriorityColor(task.priority) }]}>
-          Prioridad: {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-        </Text>
-        <Text style={[styles.status, { backgroundColor: getStatusColor(task.status) }]}>
-          Estado: {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-        </Text>
+        <View style={[styles.badge, { backgroundColor: getPriorityColor(task.priority) }]}>
+          <Text style={styles.badgeText}>
+            Prioridad: {getPriorityText(task.priority)}
+          </Text>
+        </View>
+        <View style={[styles.badge, { backgroundColor: getStatusColor(task.status) }]}>
+          <Text style={styles.badgeText}>
+            Estado: {getStatusText(task.status)}
+          </Text>
+        </View>
       </View>
       <View style={styles.actions}>
         <TouchableOpacity onPress={() => onEdit(task.id)} style={styles.actionButton}>
-          <Ionicons name="create-outline" size={24} color="#007BFF" />
-          <Text style={styles.actionButtonText}>Editar</Text>
+          <Ionicons name="pencil-outline" size={22} color={Colors.primary} />
+          <Text style={[styles.actionButtonText, { color: Colors.primary }]}>Editar</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onDelete(task.id)} style={styles.actionButton}>
-          <Ionicons name="trash-outline" size={24} color="#DC3545" />
-          <Text style={styles.actionButtonText}>Eliminar</Text>
+          <Ionicons name="trash-outline" size={22} color={Colors.error} />
+          <Text style={[styles.actionButtonText, { color: Colors.error }]}>Eliminar</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -64,72 +93,73 @@ const TaskItem = ({ task, onEdit, onDelete, onToggleStatus }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: Colors.cardBackground,
+    padding: 18,
+    borderRadius: 12,
     marginVertical: 8,
     marginHorizontal: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4.65,
+    elevation: 6,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    paddingBottom: 10,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
+    color: Colors.text,
     flexShrink: 1,
     marginRight: 10,
   },
   description: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 10,
+    fontSize: 15,
+    color: Colors.textSecondary,
+    marginBottom: 12,
   },
   details: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: 10,
   },
-  priority: {
-    fontSize: 12,
-    color: '#FFFFFF',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 5,
+  badge: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 20,
     marginRight: 8,
     marginBottom: 5,
   },
-  status: {
+  badgeText: {
     fontSize: 12,
-    color: '#FFFFFF',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 5,
-    marginBottom: 5,
+    color: Colors.cardBackground,
+    fontWeight: '600',
   },
   actions: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-around',
     borderTopWidth: 1,
-    borderTopColor: '#EEE',
-    paddingTop: 10,
+    borderTopColor: Colors.border,
+    paddingTop: 12,
+    marginTop: 5,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   actionButtonText: {
-    marginLeft: 5,
+    marginLeft: 6,
     fontSize: 14,
-    color: '#555',
+    fontWeight: '600',
   },
 });
 

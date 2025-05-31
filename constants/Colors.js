@@ -1,18 +1,47 @@
-/*export const Colors = {
-  primary: '#6200EE',       // Un púrpura vibrante para elementos principales
-  primaryLight: '#BB86FC',  // Un púrpura más claro
-  accent: '#03DAC6',        // Un cian azulado para acentos
-  background: '#F5F7FA',    // Fondo general muy claro
-  cardBackground: '#FFFFFF',// Fondo para las tarjetas
-  text: '#333333',          // Color principal del texto
-  textSecondary: '#666666', // Color secundario del texto
-  border: '#E0E0E0',        // Color para los bordes
-  success: '#4CAF50',       // Verde para éxito
-  warning: '#FFC107',       // Amarillo para advertencia
-  error: '#DC3545',         // Rojo para errores
-  priorityHigh: '#EF5350',  // Rojo para prioridad alta
-  priorityMedium: '#FFB300',// Naranja para prioridad media
-  priorityLow: '#4CAF50',   // Verde para prioridad baja
-  statusPending: '#FFC107', // Amarillo para estado pendiente
-  statusCompleted: '#28A745',// Verde para estado completado
-}; */
+export const Colors = {
+  primary: '#1E40AF',
+  primaryLight: '#3B82F6',
+  primaryDark: '#1E3A8A',
+
+  accent: '#06B6D4',
+  accentLight: '#22D3EE',
+
+  background: '#FAFAFA',
+  cardBackground: '#FFFFFF',
+  surfaceSecondary: '#F8F9FA',
+
+  text: '#1F2937',
+  textSecondary: '#6B7280',
+  textTertiary: '#9CA3AF',
+
+  border: '#E5E7EB',
+  divider: '#F3F4F6',
+
+  success: '#059669',
+  successLight: '#D1FAE5',
+
+  warning: '#D97706',
+  warningLight: '#FEF3C7',
+
+  error: '#DC2626',
+  errorLight: '#FEE2E2',
+
+  info: '#2563EB',
+  infoLight: '#DBEAFE',
+
+  priorityHigh: '#EF4444',
+  priorityMedium: '#F59E0B',
+  priorityLow: '#22C55E',
+
+  statusPending: '#F59E0B',
+  statusInProgress: '#3B82F6',
+  statusCompleted: '#10B981',
+  statusCancelled: '#6B7280',
+
+  overlay: 'rgba(0, 0, 0, 0.5)',
+  shadow: 'rgba(0, 0, 0, 0.1)',
+  disabled: '#D1D5DB',
+
+  gradientPrimary: 'linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%)',
+  gradientAccent: 'linear-gradient(135deg, #06B6D4 0%, #22D3EE 100%)',
+};

@@ -1,16 +1,20 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { Colors } from '../constants/Colors';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Header = ({ title, showBackButton = false }) => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const paddingTop = insets.top > 0 ? insets.top : (Platform.OS === 'android' ? 25 : 45);
 
   return (
-    <View style={styles.headerContainer}>
+    <View style={[styles.headerContainer, { paddingTop: paddingTop + 10 }]}>
       {showBackButton && (
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFF" />
+          <Ionicons name="arrow-back" size={28} color={Colors.cardBackground} />
         </TouchableOpacity>
       )}
       <Text style={styles.headerTitle}>{title}</Text>
@@ -21,28 +25,26 @@ const Header = ({ title, showBackButton = false }) => {
 const styles = StyleSheet.create({
   headerContainer: {
     width: '100%',
-    height: 60, // Ajusta según el diseño de tu barra de estado
-    backgroundColor: '#6200EE',
+    backgroundColor: Colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 15,
-    paddingTop: 10, // Para evitar que se superponga con la barra de estado
+    paddingBottom: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 8,
   },
   headerTitle: {
-    color: '#FFFFFF',
-    fontSize: 20,
+    color: Colors.cardBackground,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   backButton: {
     position: 'absolute',
     left: 15,
-    top: 25, // Ajusta según el diseño
+    bottom: 15,
     zIndex: 1,
   },
 });

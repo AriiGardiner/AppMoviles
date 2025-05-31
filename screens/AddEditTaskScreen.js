@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView, Picker } from 'react-native';
+import { View, StyleSheet, Alert, ScrollView } from 'react-native';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import Header from '../components/Header';
+import CustomSelect from '../components/CustomSelect';
 import { useTasks } from '../Context/TaskContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { Colors } from '../constants/Colors';
 
 const AddEditTaskScreen = () => {
   const { addTask, editTask } = useTasks();
   const navigation = useNavigation();
   const route = useRoute();
-  const taskToEdit = route.params?.task; // Si hay un parámetro 'task', estamos editando
+  const taskToEdit = route.params?.task;
 
   const [title, setTitle] = useState(taskToEdit ? taskToEdit.title : '');
   const [description, setDescription] = useState(taskToEdit ? taskToEdit.description : '');
@@ -19,7 +21,7 @@ const AddEditTaskScreen = () => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerShown: false, // Ocultar el header por defecto de React Navigation
+      headerShown: false,
     });
   }, [navigation]);
 
@@ -30,16 +32,25 @@ const AddEditTaskScreen = () => {
     }
 
     if (taskToEdit) {
-      // Editar tarea existente [cite: 15]
       editTask(taskToEdit.id, title, description, priority, status);
       Alert.alert("Éxito", "Tarea actualizada correctamente.");
     } else {
-      // Añadir nueva tarea [cite: 15]
-      addTask(title, description, priority);
+      addTask(title, description, priority, status);
       Alert.alert("Éxito", "Tarea añadida correctamente.");
     }
     navigation.goBack();
   };
+
+  const priorityOptions = [
+    { label: 'Alta', value: 'high' },
+    { label: 'Media', value: 'medium' },
+    { label: 'Baja', value: 'low' },
+  ];
+
+  const statusOptions = [
+    { label: 'Pendiente', value: 'pending' },
+    { label: 'Completada', value: 'completed' },
+  ];
 
   return (
     <View style={styles.container}>
@@ -60,41 +71,27 @@ const AddEditTaskScreen = () => {
             multiline={true}
             numberOfLines={4}
           />
-
-          <Text style={styles.label}>Prioridad</Text>
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={priority}
-              style={styles.picker}
-              onValueChange={(itemValue) => setPriority(itemValue)}
-            >
-              <Picker.Item label="Alta" value="high" />
-              <Picker.Item label="Media" value="medium" />
-              <Picker.Item label="Baja" value="low" />
-            </Picker>
-          </View>
-
-          {taskToEdit && ( // Solo mostrar el estado al editar una tarea
-            <>
-              <Text style={styles.label}>Estado</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={status}
-                  style={styles.picker}
-                  onValueChange={(itemValue) => setStatus(itemValue)}
-                >
-                  <Picker.Item label="Pendiente" value="pending" />
-                  <Picker.Item label="Completada" value="completed" />
-                </Picker>
-              </View>
-            </>
+          <CustomSelect
+            label="Prioridad"
+            options={priorityOptions}
+            selectedValue={priority}
+            onValueChange={setPriority}
+            placeholder="Selecciona una prioridad"
+          />
+          {taskToEdit && (
+            <CustomSelect
+              label="Estado"
+              options={statusOptions}
+              selectedValue={status}
+              onValueChange={setStatus}
+              placeholder="Selecciona un estado"
+            />
           )}
-
           <CustomButton
             title={taskToEdit ? "Guardar Cambios" : "Agregar Tarea"}
             onPress={handleSubmit}
-            color="#28a745"
-            textColor="#FFFFFF"
+            color={Colors.success}
+            textColor={Colors.cardBackground}
           />
         </View>
       </ScrollView>
@@ -105,7 +102,7 @@ const AddEditTaskScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Colors.background,
   },
   scrollContent: {
     flexGrow: 1,
@@ -115,32 +112,21 @@ const styles = StyleSheet.create({
   },
   form: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-    borderRadius: 10,
+    backgroundColor: Colors.cardBackground,
+    padding: 25,
+    borderRadius: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4.65,
+    elevation: 6,
   },
   label: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#333',
+    fontSize: 17,
+    marginBottom: 8,
+    color: Colors.text,
     fontWeight: 'bold',
     marginTop: 10,
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#CCC',
-    borderRadius: 8,
-    backgroundColor: '#F8F8F8',
-    marginBottom: 15,
-  },
-  picker: {
-    height: 50,
-    width: '100%',
   },
 });
 
