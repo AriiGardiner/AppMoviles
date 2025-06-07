@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity, ActivityIndicator, Modal, Pressable, ScrollView } from 'react-native';
 import { useTasks } from '../Context/TaskContext'; 
 import TaskItem from '../components/TaskItem';
-import CustomButton from '../components/CustomButton';
 import Header from '../components/Header';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
