@@ -1,24 +1,42 @@
 import React from 'react';
-import AppNavigator from'./navigation/AppNavigator';
-import { TaskProvider } from './Context/TaskContext';
-import { StatusBar } from 'expo-status-bar';
+import AppNavigator from './Navigation/AppNavigator';
+import { StatusBar } from 'react-native';
 import { View, StyleSheet } from 'react-native';
-import { Colors } from './constants/Colors';
+import { AuthProvider } from './Context/AuthContext';
+import { TaskProvider } from './Context/TaskContext';
+import { ThemeProvider, useTheme } from './Context/ThemeContext';
+import { themes } from './constants/ThemeColors';
+
+const AppContent = () => {
+  const { theme } = useTheme();
+  const currentTheme = themes[theme];
+
+  const dynamicStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: currentTheme.colors.background,
+    },
+  });
+
+  return (
+    <View style={dynamicStyles.container}>
+      <StatusBar
+        barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={currentTheme.colors.background}
+      />
+      <AppNavigator />
+    </View>
+  );
+};
 
 export default function App() {
   return (
-    <TaskProvider>
-      <View style={styles.container}>
-        <StatusBar style="light" backgroundColor={Colors.primary} />
-        <AppNavigator />
-      </View>
-    </TaskProvider>
+    <AuthProvider>
+      <TaskProvider>
+        <ThemeProvider>
+          <AppContent />
+        </ThemeProvider>
+      </TaskProvider>
+    </AuthProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-});

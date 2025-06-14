@@ -41,7 +41,4 @@ export const Colors = {
   overlay: 'rgba(0, 0, 0, 0.5)',
   shadow: 'rgba(0, 0, 0, 0.1)',
   disabled: '#D1D5DB',
-
-  gradientPrimary: 'linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%)',
-  gradientAccent: 'linear-gradient(135deg, #06B6D4 0%, #22D3EE 100%)',
 };

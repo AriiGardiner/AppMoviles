@@ -6,13 +6,17 @@ import Header from '../components/Header';
 import CustomSelect from '../components/CustomSelect';
 import { useTasks } from '../Context/TaskContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Colors } from '../constants/Colors';
+import { useTheme } from '../Context/ThemeContext';
+import { themes } from '../constants/ThemeColors';
 
 const AddEditTaskScreen = () => {
   const { addTask, editTask } = useTasks();
   const navigation = useNavigation();
   const route = useRoute();
   const taskToEdit = route.params?.task;
+
+  const { theme } = useTheme();
+  const currentTheme = themes[theme]; 
 
   const [title, setTitle] = useState(taskToEdit ? taskToEdit.title : '');
   const [description, setDescription] = useState(taskToEdit ? taskToEdit.description : '');
@@ -53,10 +57,13 @@ const AddEditTaskScreen = () => {
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: currentTheme.colors.background }]}>
       <Header title={taskToEdit ? "Editar Tarea" : "Agregar Tarea"} showBackButton={true} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.form}>
+        <View style={[styles.form, {
+          backgroundColor: currentTheme.colors.cardBackground,
+          shadowColor: currentTheme.colors.shadowColor, 
+        }]}>
           <CustomInput
             label="Título de la Tarea"
             placeholder="Ej: Comprar víveres"
@@ -90,8 +97,8 @@ const AddEditTaskScreen = () => {
           <CustomButton
             title={taskToEdit ? "Guardar Cambios" : "Agregar Tarea"}
             onPress={handleSubmit}
-            color={Colors.success}
-            textColor={Colors.cardBackground}
+            color={currentTheme.colors.success} 
+            textColor={currentTheme.colors.buttonText} 
           />
         </View>
       </ScrollView>
@@ -102,7 +109,6 @@ const AddEditTaskScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   scrollContent: {
     flexGrow: 1,
@@ -112,19 +118,16 @@ const styles = StyleSheet.create({
   },
   form: {
     width: '100%',
-    backgroundColor: Colors.cardBackground,
     padding: 25,
     borderRadius: 15,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.15,
     shadowRadius: 4.65,
     elevation: 6,
   },
-  label: {
+  label: { 
     fontSize: 17,
     marginBottom: 8,
-    color: Colors.text,
     fontWeight: 'bold',
     marginTop: 10,
   },

@@ -1,30 +1,35 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../constants/Colors';
+
+import { useTheme } from '../Context/ThemeContext';
+import { themes } from '../constants/ThemeColors';
 
 const TaskItem = ({ task, onEdit, onDelete, onToggleStatus }) => {
+  const { theme } = useTheme(); 
+  const currentTheme = themes[theme];
+
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'high':
-        return Colors.priorityHigh;
+        return currentTheme.colors.priorityHigh; 
       case 'medium':
-        return Colors.priorityMedium;
+        return currentTheme.colors.priorityMedium; 
       case 'low':
-        return Colors.priorityLow;
+        return currentTheme.colors.priorityLow; 
       default:
-        return Colors.textSecondary;
+        return currentTheme.colors.textSecondary; 
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
       case 'completed':
-        return Colors.statusCompleted;
+        return currentTheme.colors.statusCompleted; 
       case 'pending':
-        return Colors.statusPending;
+        return currentTheme.colors.statusPending; 
       default:
-        return Colors.textSecondary;
+        return currentTheme.colors.textSecondary; 
     }
   };
 
@@ -53,38 +58,45 @@ const TaskItem = ({ task, onEdit, onDelete, onToggleStatus }) => {
   };
 
   return (
-    <View style={styles.card}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{task.title}</Text>
+    <View style={[styles.card, {
+      backgroundColor: currentTheme.colors.cardBackground, 
+      shadowColor: currentTheme.colors.shadowColor, 
+    }]}>
+      <View style={[styles.header, {
+        borderBottomColor: currentTheme.colors.border,
+      }]}>
+        <Text style={[styles.title, { color: currentTheme.colors.text }]}>{task.title}</Text>
         <TouchableOpacity onPress={() => onToggleStatus(task.id, task.status)}>
           <Ionicons
             name={task.status === 'completed' ? 'checkmark-circle' : 'time-outline'}
             size={26}
-            color={getStatusColor(task.status)}
+            color={getStatusColor(task.status)} 
           />
         </TouchableOpacity>
       </View>
-      <Text style={styles.description}>{task.description}</Text>
+      <Text style={[styles.description, { color: currentTheme.colors.textSecondary }]}>{task.description}</Text>
       <View style={styles.details}>
         <View style={[styles.badge, { backgroundColor: getPriorityColor(task.priority) }]}>
-          <Text style={styles.badgeText}>
+          <Text style={[styles.badgeText, { color: currentTheme.colors.buttonText }]}> 
             Prioridad: {getPriorityText(task.priority)}
           </Text>
         </View>
         <View style={[styles.badge, { backgroundColor: getStatusColor(task.status) }]}>
-          <Text style={styles.badgeText}>
+          <Text style={[styles.badgeText, { color: currentTheme.colors.buttonText }]}> 
             Estado: {getStatusText(task.status)}
           </Text>
         </View>
       </View>
-      <View style={styles.actions}>
+      <View style={[styles.actions, {
+        borderTopColor: currentTheme.colors.border, 
+      }]}>
         <TouchableOpacity onPress={() => onEdit(task.id)} style={styles.actionButton}>
-          <Ionicons name="pencil-outline" size={22} color={Colors.primary} />
-          <Text style={[styles.actionButtonText, { color: Colors.primary }]}>Editar</Text>
+          <Ionicons name="pencil-outline" size={22} color={currentTheme.colors.primary} /> 
+          <Text style={[styles.actionButtonText, { color: currentTheme.colors.primary }]}>Editar</Text> 
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onDelete(task.id)} style={styles.actionButton}>
-          <Ionicons name="trash-outline" size={22} color={Colors.error} />
-          <Text style={[styles.actionButtonText, { color: Colors.error }]}>Eliminar</Text>
+          <Ionicons name="trash-outline" size={22} color={currentTheme.colors.danger} /> 
+          <Text style={[styles.actionButtonText, { color: currentTheme.colors.danger }]}>Eliminar</Text> 
         </TouchableOpacity>
       </View>
     </View>
@@ -93,12 +105,10 @@ const TaskItem = ({ task, onEdit, onDelete, onToggleStatus }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.cardBackground,
     padding: 18,
     borderRadius: 12,
     marginVertical: 8,
     marginHorizontal: 16,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.18,
     shadowRadius: 4.65,
@@ -110,19 +120,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
     paddingBottom: 10,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.text,
     flexShrink: 1,
     marginRight: 10,
   },
   description: {
     fontSize: 15,
-    color: Colors.textSecondary,
     marginBottom: 12,
   },
   details: {
@@ -139,14 +146,12 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 12,
-    color: Colors.cardBackground,
     fontWeight: '600',
   },
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
     paddingTop: 12,
     marginTop: 5,
   },

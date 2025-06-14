@@ -1,30 +1,63 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Header from '../components/Header';
-import { Colors } from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import ThemeToggleButton from '../components/ThemeToggleButton';
+import CustomButton from '../components/CustomButton';
 
-const SettingsScreen = () => {
+import { useTheme } from '../Context/ThemeContext';
+import { themes } from '../constants/ThemeColors';
+import { useAuth } from '../Context/AuthContext';
+
+const SettingsScreen = ({ navigation }) => {
+  const { theme } = useTheme();
+  const currentTheme = themes[theme];
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+
+    await logout();
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: currentTheme.colors.background }]}>
       <Header title="Ajustes" showBackButton={true} />
+
       <View style={styles.content}>
-        <Ionicons name="settings-outline" size={80} color={Colors.primaryLight} style={styles.icon} />
-        <Text style={styles.titleText}>¡Bienvenido a los Ajustes!</Text>
-        <Text style={styles.descriptionText}>Aquí podrías personalizar tu experiencia con la aplicación:</Text>
-        <View style={styles.listItemContainer}>
-          <Ionicons name="sunny-outline" size={20} color={Colors.textSecondary} style={styles.listItemIcon} />
-          <Text style={styles.listItem}>Cambiar a Modo Claro/Oscuro</Text>
+        <Ionicons name="settings-outline" size={80} color={currentTheme.colors.primary} style={styles.icon} />
+        <Text style={[styles.titleText, { color: currentTheme.colors.text }]}>¡Bienvenido a los Ajustes!</Text>
+        <Text style={[styles.descriptionText, { color: currentTheme.colors.placeholderText }]}>Aquí podrías personalizar tu experiencia con la aplicación:</Text>
+
+        <View style={[styles.listItemContainer, {
+            backgroundColor: currentTheme.colors.cardBackground,
+            borderColor: currentTheme.colors.borderColor,
+            borderWidth: 1
+        }]}>
+          <Ionicons name="sunny-outline" size={20} color={currentTheme.colors.primary} style={styles.listItemIcon} />
+          <Text style={[styles.listItem, { color: currentTheme.colors.text }]}>Modo Oscuro</Text>
+          <View style={styles.spacer} />
+          <ThemeToggleButton />
         </View>
-        <View style={styles.listItemContainer}>
-          <Ionicons name="notifications-outline" size={20} color={Colors.textSecondary} style={styles.listItemIcon} />
-          <Text style={styles.listItem}>Configurar Notificaciones</Text>
+
+        <View style={[styles.listItemContainer, { backgroundColor: currentTheme.colors.cardBackground, borderColor: currentTheme.colors.borderColor, borderWidth: 1 }]}>
+          <Ionicons name="notifications-outline" size={20} color={currentTheme.colors.primary} style={styles.listItemIcon} />
+          <Text style={[styles.listItem, { color: currentTheme.colors.text }]}>Configurar Notificaciones</Text>
         </View>
-        <View style={styles.listItemContainer}>
-          <Ionicons name="cloud-upload-outline" size={20} color={Colors.textSecondary} style={styles.listItemIcon} />
-          <Text style={styles.listItem}>Sincronizar Tareas con la Nube</Text>
+        <View style={[styles.listItemContainer, { backgroundColor: currentTheme.colors.cardBackground, borderColor: currentTheme.colors.borderColor, borderWidth: 1 }]}>
+          <Ionicons name="cloud-upload-outline" size={20} color={currentTheme.colors.primary} style={styles.listItemIcon} />
+          <Text style={[styles.listItem, { color: currentTheme.colors.text }]}>Sincronizar Tareas con la Nube</Text>
         </View>
-        <Text style={styles.comingSoon}>¡Próximamente más opciones!</Text>
+        <Text style={[styles.comingSoon, { color: currentTheme.colors.placeholderText }]}>¡Próximamente más opciones!</Text>
+
+        <View style={{ marginTop: 30, width: '90%' }}>
+          <CustomButton
+            title="Cerrar Sesión"
+            onPress={handleLogout}
+            color={currentTheme.colors.primary}
+            textColor={currentTheme.colors.buttonText} 
+          />
+        </View>
+
       </View>
     </View>
   );
@@ -33,7 +66,6 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   content: {
     flex: 1,
@@ -48,13 +80,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: Colors.text,
     textAlign: 'center',
   },
   descriptionText: {
     fontSize: 16,
     marginBottom: 20,
-    color: Colors.textSecondary,
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -62,7 +92,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-    backgroundColor: Colors.cardBackground,
     paddingVertical: 12,
     paddingHorizontal: 15,
     borderRadius: 10,
@@ -78,14 +107,15 @@ const styles = StyleSheet.create({
   },
   listItem: {
     fontSize: 16,
-    color: Colors.text,
-    flexShrink: 1,
+    flex: 1, 
+  },
+  spacer: { 
+    flex: 1,
   },
   comingSoon: {
     marginTop: 30,
     fontSize: 14,
     fontStyle: 'italic',
-    color: Colors.textSecondary,
   }
 });
 

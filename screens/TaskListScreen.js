@@ -1,22 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity, ActivityIndicator, Modal, Pressable, ScrollView } from 'react-native';
-import { useTasks } from '../Context/TaskContext'; 
-import TaskItem from '../components/TaskItem';
-import Header from '../components/Header';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native'; 
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../constants/Colors';
 import { Picker } from '@react-native-picker/picker';
 
+import TaskItem from '../components/TaskItem';
+import Header from '../components/Header';
+
+import { useTasks } from '../Context/TaskContext';
+import { useTheme } from '../Context/ThemeContext'; 
+import { themes } from '../constants/ThemeColors'; 
+
 const TaskListScreen = () => {
-  const { tasks, deleteTask, editTask, getOrganizationSuggestion } = useTasks();
+  const { tasks, deleteTask, editTask, getOrganizationSuggestion, loadTasks, toggleTaskCompletion } = useTasks();
   const navigation = useNavigation();
+  const { theme } = useTheme();
+  const currentTheme = themes[theme]; 
+
   const [filterPriority, setFilterPriority] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [suggestion, setSuggestion] = useState('');
   const [loadingSuggestion, setLoadingSuggestion] = useState(false);
   const [showPriorityPicker, setShowPriorityPicker] = useState(false);
   const [showStatusPicker, setShowStatusPicker] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadTasks();
+    }, [loadTasks])
+  );
 
   const handleDelete = (id) => {
     Alert.alert(
@@ -60,7 +72,7 @@ const TaskListScreen = () => {
   const getStatusLabel = (value) => {
     switch (value) {
       case 'all': return 'Todos';
-      case 'pending': return 'Estado';
+      case 'pending': return 'Pendientes'; 
       case 'completed': return 'Completadas';
       default: return 'Todos';
     }
@@ -75,33 +87,51 @@ const TaskListScreen = () => {
     return priorityOrder[b.priority] - priorityOrder[a.priority];
   });
 
+  const navigateToSettings = () => {
+    navigation.navigate('Settings');
+  };
+
   return (
-    <View style={styles.container}>
-      <Header title="Mis Tareas" />
-      
+    <View style={[styles.container, { backgroundColor: currentTheme.colors.background }]}>
+      <Header
+        title="Mis Tareas"
+        showBackButton={false} 
+        rightButton={
+          <TouchableOpacity onPress={navigateToSettings} style={styles.settingsButton}>
+            <Ionicons name="settings-outline" size={24} color={currentTheme.colors.headerText} />
+          </TouchableOpacity>
+        }
+      />
+
       <View style={styles.filtersSection}>
-        <Text style={styles.filtersTitle}>Filtrar por:</Text>
+        <Text style={[styles.filtersTitle, { color: currentTheme.colors.text }]}>Filtrar por:</Text>
         <View style={styles.filtersContainer}>
           <Pressable
-            style={styles.filterInput}
+            style={[styles.filterInput, {
+              backgroundColor: currentTheme.colors.background,
+              borderColor: currentTheme.colors.borderColor,
+            }]}
             onPress={() => setShowPriorityPicker(true)}
           >
             <View style={styles.filterContent}>
-              <Ionicons name="flag-outline" size={16} color={Colors.primary} />
-              <Text style={styles.filterText}>{getPriorityLabel(filterPriority)}</Text>
+              <Ionicons name="flag-outline" size={16} color={currentTheme.colors.primary} />
+              <Text style={[styles.filterText, { color: currentTheme.colors.text }]}>{getPriorityLabel(filterPriority)}</Text>
             </View>
-            <Ionicons name="chevron-down-outline" size={16} color={Colors.textSecondary} />
+            <Ionicons name="chevron-down-outline" size={16} color={currentTheme.colors.textSecondary} />
           </Pressable>
 
           <Pressable
-            style={styles.filterInput}
+            style={[styles.filterInput, {
+              backgroundColor: currentTheme.colors.background,
+              borderColor: currentTheme.colors.borderColor,
+            }]}
             onPress={() => setShowStatusPicker(true)}
           >
             <View style={styles.filterContent}>
-              <Ionicons name="checkmark-circle-outline" size={16} color={Colors.primary} />
-              <Text style={styles.filterText}>{getStatusLabel(filterStatus)}</Text>
+              <Ionicons name="checkmark-circle-outline" size={16} color={currentTheme.colors.primary} />
+              <Text style={[styles.filterText, { color: currentTheme.colors.text }]}>{getStatusLabel(filterStatus)}</Text>
             </View>
-            <Ionicons name="chevron-down-outline" size={16} color={Colors.textSecondary} />
+            <Ionicons name="chevron-down-outline" size={16} color={currentTheme.colors.textSecondary} />
           </Pressable>
         </View>
       </View>
@@ -113,20 +143,21 @@ const TaskListScreen = () => {
         onRequestClose={() => setShowPriorityPicker(false)}
       >
         <Pressable style={styles.modalOverlay} onPress={() => setShowPriorityPicker(false)}>
-          <View style={styles.pickerModalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Seleccionar Prioridad</Text>
+          <View style={[styles.pickerModalContent, { backgroundColor: currentTheme.colors.cardBackground }]}>
+            <View style={[styles.modalHeader, { borderBottomColor: currentTheme.colors.borderColor }]}>
+              <Text style={[styles.modalTitle, { color: currentTheme.colors.text }]}>Seleccionar Prioridad</Text>
               <Pressable onPress={() => setShowPriorityPicker(false)}>
-                <Ionicons name="close" size={24} color={Colors.textSecondary} />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </Pressable>
             </View>
             <Picker
               selectedValue={filterPriority}
-              style={styles.modalPicker}
+              style={[styles.modalPicker, { color: currentTheme.colors.text }]}
               onValueChange={(itemValue) => {
                 setFilterPriority(itemValue);
                 setShowPriorityPicker(false);
               }}
+              itemStyle={{ color: currentTheme.colors.text }}
             >
               <Picker.Item label="Todas las Prioridades" value="all" />
               <Picker.Item label="Prioridad Alta" value="high" />
@@ -144,20 +175,21 @@ const TaskListScreen = () => {
         onRequestClose={() => setShowStatusPicker(false)}
       >
         <Pressable style={styles.modalOverlay} onPress={() => setShowStatusPicker(false)}>
-          <View style={styles.pickerModalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Seleccionar Estado</Text>
+          <View style={[styles.pickerModalContent, { backgroundColor: currentTheme.colors.cardBackground }]}>
+            <View style={[styles.modalHeader, { borderBottomColor: currentTheme.colors.borderColor }]}>
+              <Text style={[styles.modalTitle, { color: currentTheme.colors.text }]}>Seleccionar Estado</Text>
               <Pressable onPress={() => setShowStatusPicker(false)}>
-                <Ionicons name="close" size={24} color={Colors.textSecondary} />
+                <Ionicons name="close" size={24} color={currentTheme.colors.textSecondary} />
               </Pressable>
             </View>
             <Picker
               selectedValue={filterStatus}
-              style={styles.modalPicker}
+              style={[styles.modalPicker, { color: currentTheme.colors.text }]}
               onValueChange={(itemValue) => {
                 setFilterStatus(itemValue);
                 setShowStatusPicker(false);
               }}
+              itemStyle={{ color: currentTheme.colors.text }} 
             >
               <Picker.Item label="Todos los Estados" value="all" />
               <Picker.Item label="Pendientes" value="pending" />
@@ -169,38 +201,38 @@ const TaskListScreen = () => {
 
       <View style={styles.mainContent}>
         <TouchableOpacity
-          style={[styles.suggestionButton, loadingSuggestion && styles.suggestionButtonDisabled]}
+          style={[styles.suggestionButton, { backgroundColor: currentTheme.colors.accent }, loadingSuggestion && styles.suggestionButtonDisabled]}
           onPress={handleGetSuggestion}
           disabled={loadingSuggestion}
           activeOpacity={0.8}
         >
           <View style={styles.suggestionButtonContent}>
             {loadingSuggestion ? (
-              <ActivityIndicator size="small" color={Colors.cardBackground} />
+              <ActivityIndicator size="small" color={currentTheme.colors.buttonText} />
             ) : (
-              <Ionicons name="bulb-outline" size={20} color={Colors.cardBackground} />
+              <Ionicons name="bulb-outline" size={20} color={currentTheme.colors.buttonText} />
             )}
-            <Text style={styles.suggestionButtonText}>
+            <Text style={[styles.suggestionButtonText, { color: currentTheme.colors.buttonText }]}>
               {loadingSuggestion ? "Obteniendo..." : "Sugerencia de Organización"}
             </Text>
           </View>
         </TouchableOpacity>
 
         {suggestion ? (
-          <View style={styles.suggestionBox}>
+          <View style={[styles.suggestionBox, { backgroundColor: currentTheme.colors.cardBackground, borderLeftColor: currentTheme.colors.accent }]}>
             <View style={styles.suggestionHeader}>
-              <Ionicons name="bulb" size={20} color={Colors.accent} />
-              <Text style={styles.suggestionTitle}>Sugerencia</Text>
+              <Ionicons name="bulb" size={20} color={currentTheme.colors.accent} />
+              <Text style={[styles.suggestionTitle, { color: currentTheme.colors.text }]}>Sugerencia</Text>
             </View>
-            <Text style={styles.suggestionText}>{suggestion}</Text>
+            <Text style={[styles.suggestionText, { color: currentTheme.colors.textSecondary }]}>{suggestion}</Text>
           </View>
         ) : null}
 
         {filteredTasks.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons name="clipboard-outline" size={64} color={Colors.textSecondary} />
-            <Text style={styles.noTasksText}>No hay tareas para mostrar</Text>
-            <Text style={styles.noTasksSubtext}>¡Agrega tu primera tarea!</Text>
+            <Ionicons name="clipboard-outline" size={64} color={currentTheme.colors.placeholderText} />
+            <Text style={[styles.noTasksText, { color: currentTheme.colors.textSecondary }]}>No hay tareas para mostrar</Text>
+            <Text style={[styles.noTasksSubtext, { color: currentTheme.colors.textSecondary }]}>¡Agrega tu primera tarea!</Text>
           </View>
         ) : (
           <FlatList
@@ -222,11 +254,11 @@ const TaskListScreen = () => {
 
       <View style={styles.floatingButtonContainer}>
         <TouchableOpacity
-          style={styles.floatingButton}
+          style={[styles.floatingButton, { backgroundColor: currentTheme.colors.primary }]}
           onPress={() => navigation.navigate('AddEditTask')}
           activeOpacity={0.8}
         >
-          <Ionicons name="add" size={28} color={Colors.cardBackground} />
+          <Ionicons name="add" size={28} color={currentTheme.colors.buttonText} />
         </TouchableOpacity>
       </View>
     </View>
@@ -236,12 +268,10 @@ const TaskListScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   filtersSection: {
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: Colors.cardBackground,
     marginHorizontal: 16,
     marginTop: 10,
     borderRadius: 16,
@@ -254,7 +284,6 @@ const styles = StyleSheet.create({
   filtersTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text,
     marginBottom: 12,
   },
   filtersContainer: {
@@ -266,12 +295,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: Colors.background,
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: Colors.border,
   },
   filterContent: {
     flexDirection: 'row',
@@ -280,7 +307,6 @@ const styles = StyleSheet.create({
   },
   filterText: {
     fontSize: 14,
-    color: Colors.text,
     fontWeight: '500',
   },
   modalOverlay: {
@@ -289,7 +315,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   pickerModalContent: {
-    backgroundColor: Colors.cardBackground,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingBottom: 30,
@@ -302,17 +327,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text,
   },
   modalPicker: {
     width: '100%',
     height: 200,
-    color: Colors.text,
   },
   mainContent: {
     flex: 1,
@@ -320,12 +342,10 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   suggestionButton: {
-    backgroundColor: Colors.accent,
     borderRadius: 16,
     paddingVertical: 14,
     paddingHorizontal: 20,
     marginBottom: 16,
-    shadowColor: Colors.accent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -341,17 +361,14 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   suggestionButtonText: {
-    color: Colors.cardBackground,
     fontSize: 16,
     fontWeight: '600',
   },
   suggestionBox: {
-    backgroundColor: Colors.cardBackground,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.accent,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -367,12 +384,10 @@ const styles = StyleSheet.create({
   suggestionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text,
   },
   suggestionText: {
     fontSize: 15,
     lineHeight: 22,
-    color: Colors.textSecondary,
     fontStyle: 'italic',
   },
   emptyState: {
@@ -383,14 +398,12 @@ const styles = StyleSheet.create({
   },
   noTasksText: {
     fontSize: 20,
-    color: Colors.textSecondary,
     fontWeight: '600',
     marginTop: 16,
     textAlign: 'center',
   },
   noTasksSubtext: {
     fontSize: 16,
-    color: Colors.textSecondary,
     marginTop: 8,
     textAlign: 'center',
     opacity: 0.7,
@@ -404,17 +417,19 @@ const styles = StyleSheet.create({
     right: 20,
   },
   floatingButton: {
-    backgroundColor: Colors.primary,
     width: 56,
     height: 56,
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+  },
+
+  settingsButton: {
+    padding: 5,
   },
 });
 
