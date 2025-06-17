@@ -1,5 +1,5 @@
 import React from 'react';
-import AppNavigator from './Navigation/AppNavigator';
+import AppNavigator from './navigation/AppNavigator';
 import { StatusBar } from 'react-native';
 import { View, StyleSheet } from 'react-native';
 import { AuthProvider } from './Context/AuthContext';

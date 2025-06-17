@@ -39,14 +39,6 @@ const SettingsScreen = ({ navigation }) => {
           <ThemeToggleButton />
         </View>
 
-        <View style={[styles.listItemContainer, { backgroundColor: currentTheme.colors.cardBackground, borderColor: currentTheme.colors.borderColor, borderWidth: 1 }]}>
-          <Ionicons name="notifications-outline" size={20} color={currentTheme.colors.primary} style={styles.listItemIcon} />
-          <Text style={[styles.listItem, { color: currentTheme.colors.text }]}>Configurar Notificaciones</Text>
-        </View>
-        <View style={[styles.listItemContainer, { backgroundColor: currentTheme.colors.cardBackground, borderColor: currentTheme.colors.borderColor, borderWidth: 1 }]}>
-          <Ionicons name="cloud-upload-outline" size={20} color={currentTheme.colors.primary} style={styles.listItemIcon} />
-          <Text style={[styles.listItem, { color: currentTheme.colors.text }]}>Sincronizar Tareas con la Nube</Text>
-        </View>
         <Text style={[styles.comingSoon, { color: currentTheme.colors.placeholderText }]}>¡Próximamente más opciones!</Text>
 
         <View style={{ marginTop: 30, width: '90%' }}>
